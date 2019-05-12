@@ -1,0 +1,14 @@
+{
+  "name": "brand-new-logger",
+  "version": "1.0.0",
+  "description": "whoa",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "metyslav",
+  "license": "ISC",
+  "dependencies": {
+    "telegraf": "^3.29.0"
+  }
+}
