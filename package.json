@@ -9,6 +9,7 @@
   "author": "metyslav",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.0.0",
     "telegraf": "^3.29.0"
   }
 }
