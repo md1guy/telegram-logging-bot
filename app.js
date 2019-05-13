@@ -92,7 +92,7 @@ const log = message => {
         senderName = 'undefinedSenderName';
     }
 
-    senderName = senderName.padEnd(20, ' ');
+    senderName = senderName.padEnd(15, ' ');
 
     switch (message.chat.type) {
         case 'group':
