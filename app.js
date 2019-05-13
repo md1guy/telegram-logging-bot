@@ -1,4 +1,5 @@
 const Telegraf = require('telegraf');
+const fs = require('fs');
 
 require('dotenv').config();
 
@@ -58,13 +59,24 @@ const parse = ctx => {
         }
 
         log(message);
+        logToFile(message, 'messages.jsonlog');
 
         // console.log(message);
     }
 };
 
+const logToFile = (message, fileName) => {
+    fs.appendFile(fileName, '\n' + JSON.stringify(message), e => (e ? console.log(e) : null));
+};
+
 const log = message => {
     const sendDate = new Date(message.date * 1000);
+    const sendDateHours = (sendDate.getUTCHours() + 3).toString().padStart(2, '0');
+    const sendDateMinutes = sendDate
+        .getUTCMinutes()
+        .toString()
+        .padStart(2, '0');
+
     let senderName;
     let receiverName;
     let data;
@@ -79,6 +91,8 @@ const log = message => {
     } else {
         senderName = 'undefinedSenderName';
     }
+
+    senderName = senderName.padEnd(20, ' ');
 
     switch (message.chat.type) {
         case 'group':
@@ -106,9 +120,5 @@ const log = message => {
             break;
     }
 
-    console.log(
-        `${('0' + (sendDate.getUTCHours() + 3)).substr(-2)}:${('0' + sendDate.getUTCMinutes()).substr(
-            -2,
-        )} ${senderName} -> [${receiverName}]: '${data}'`,
-    );
+    console.log(`${sendDateHours}:${sendDateMinutes} ${senderName} -> [${receiverName}]: '${data}'`);
 };
