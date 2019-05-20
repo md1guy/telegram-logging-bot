@@ -7,10 +7,16 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.on('message', ctx => parse(ctx));
 bot.launch();
 
+const sendPhotoById = (ctx, fileId) => {
+    ctx.replyWithPhoto(fileId);
+};
+
 const parse = ctx => {
     if (ctx.updateSubTypes.length === 1) {
         const receivedMsg = ctx.update.message;
         const chat = receivedMsg.chat;
+
+        const photosCommand = '/photo';
 
         let message = {
             id: ctx.update.update_id,
@@ -21,6 +27,15 @@ const parse = ctx => {
         };
 
         if (ctx.updateSubTypes.includes('text')) {
+            if (
+                receivedMsg.text.slice(0, photosCommand.length) === photosCommand &&
+                receivedMsg.from.id.toString() === process.env.MD1GUY
+            ) {
+                const fileId = receivedMsg.text.substring(photosCommand.length + 1, receivedMsg.text.length);
+                sendPhotoById(ctx, fileId);
+                return;
+            }
+
             message.type = 'text';
             message.text = receivedMsg.text;
         } else if (ctx.updateSubTypes.includes('photo')) {
@@ -32,12 +47,15 @@ const parse = ctx => {
                 message.text = receivedMsg.caption;
             }
         } else {
-            message.type = ctx.updateSubTypes[0];
+            // message.type = ctx.updateSubTypes[0];
+            return;
         }
 
         if (receivedMsg.from.username) {
             message.sender.username = receivedMsg.from.username;
-        } else if (receivedMsg.from.first_name) {
+        }
+
+        if (receivedMsg.from.first_name) {
             message.sender.firstName = receivedMsg.from.first_name;
 
             if (receivedMsg.from.last_name) {
@@ -71,7 +89,12 @@ const logToFile = (message, fileName) => {
 
 const log = message => {
     const sendDate = new Date(message.date * 1000);
-    const sendDateHours = (sendDate.getUTCHours() + 3).toString().padStart(2, '0');
+
+    const sendDateHours =
+        sendDate.getUTCHours() > 20
+            ? (sendDate.getUTCHours() - 21).toString().padStart(2, '0')
+            : (sendDate.getUTCHours() + 3).toString().padStart(2, '0');
+
     const sendDateMinutes = sendDate
         .getUTCMinutes()
         .toString()
@@ -117,7 +140,6 @@ const log = message => {
         default:
             // data = message.fileId ? `FILE_ID: ${message.fileId}` : 'undefinedMessageData';
             return;
-            break;
     }
 
     console.log(`${sendDateHours}:${sendDateMinutes} ${senderName} -> [${receiverName}]: '${data}'`);
