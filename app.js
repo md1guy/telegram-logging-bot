@@ -77,10 +77,21 @@ const parse = ctx => {
         }
 
         log(message);
-        logToFile(message, 'messages.jsonlog');
 
-        // console.log(message);
+        const fileName = 'current.jsonlog';
+        if (getFileSizeInMB(fileName) >= 1) renameFile(fileName, Date.now() + '.jsonlog');
+        logToFile(message, fileName);
     }
+};
+
+const getFileSizeInMB = fileName => {
+    const stats = fs.statSync(fileName);
+    const fileSizeInBytes = stats.size;
+    return fileSizeInBytes / 1000000.0;
+};
+
+const renameFile = (oldName, newName) => {
+    fs.rename(oldName, newName, e => (e ? console.log('Error occured while renaming the file: ' + err) : null));
 };
 
 const logToFile = (message, fileName) => {
