@@ -102,7 +102,7 @@ const log = message => {
 
     let senderName;
     let receiverName;
-    let data;
+    let logString;
 
     if (message.sender.username) {
         senderName = `@${message.sender.username}`;
@@ -122,7 +122,7 @@ const log = message => {
             receiverName = message.chat.title;
             break;
         case 'private':
-            receiverName = 'direct chat with bot';
+            receiverName = 'direct';
             break;
         default:
             receiverName = 'undefinedReceiverName';
@@ -131,16 +131,20 @@ const log = message => {
 
     switch (message.type) {
         case 'text':
-            data = message.text;
+            logString = message.text;
             break;
         case 'photo':
-            data = `Photo id: ${message.fileId}`;
-            if (message.text) data = `Caption: '${message.text}'. ` + data;
+            logString = `Photo id: ${message.fileId}`;
+            if (message.text) logString = `Caption: '${message.text}'. ` + logString;
             break;
         default:
             // data = message.fileId ? `FILE_ID: ${message.fileId}` : 'undefinedMessageData';
             return;
     }
 
-    console.log(`${sendDateHours}:${sendDateMinutes} ${senderName} -> [${receiverName}]: '${data}'`);
+    const baseLogString = `${sendDateHours}:${sendDateMinutes} ${senderName} -> [${receiverName}]: '`;
+
+    logString = `${baseLogString}${logString.replace(/(\r\n|\n|\r)/gm, '\n' + ' '.repeat(baseLogString.length))}'`;
+
+    console.log(logString);
 };
