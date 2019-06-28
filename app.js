@@ -146,7 +146,7 @@ const log = message => {
             break;
         case 'photo':
             logString = `Photo id: ${message.fileId}`;
-            if (message.text) logString = `Caption: '${message.text}'. ` + logString;
+            if (message.text) logString = `Caption: '${message.text}'\n${logString}`;
             break;
         default:
             // data = message.fileId ? `FILE_ID: ${message.fileId}` : 'undefinedMessageData';
